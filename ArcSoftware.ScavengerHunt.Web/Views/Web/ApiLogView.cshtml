@@ -1,0 +1,168 @@
+﻿
+@{
+    Layout = null;
+    ViewData["Title"] = "ApiLogs";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-colvis-1.5.6/b-html5-1.5.6/b-print-1.5.6/cr-1.5.0/fc-3.2.5/kt-2.5.0/r-2.2.2/rr-1.2.4/sc-2.0.0/sl-1.3.0/datatables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+    <link rel="stylesheet" href="~/css/logs.css" />
+    <title>API Logs</title>
+</head>
+<body class="pt-0">
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <div class="row justify-content-between px-3">
+                <div class="col-3 pl-0">
+                    <h6 class="m-0 font-weight-bold align-bottom pt-2">Api Logs</h6>
+                </div>
+                <div class="col-lg-5 text-center bg-transparent">
+                    <div class="input-group input-daterange">
+                        <input type="text" class="form-control" id="From" value="">
+                        <div class="input-group-addon">to</div>
+                        <input type="text" class="form-control" id="To" value="">
+                        <button type="button" class="btn btn-outline-success" onclick="searchDates();">Execute</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h6 class=" text-danger align-content-center p-2" style="display: none" id="NoLogs">No ApiLogs in Date Range.</h6>
+    </div>
+    <div class="table-responsive" style="overflow: visible">
+        <table id="logTable" style="width: 100%; display: none" class="display" cursor="pointer">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Sev</th>
+                    <th>Pf</th>
+                    <th>Route</th>
+                    <th>V</th>
+                    <th>U</th>
+                    <th>Id</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: .7em"></tbody>
+        </table>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js" asp-fallback-src="~/lib/jquery/dist/jquery.min.js" asp-fallback-test="window.jQuery" crossorigin="anonymous" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-colvis-1.5.6/b-html5-1.5.6/b-print-1.5.6/cr-1.5.0/fc-3.2.5/kt-2.5.0/r-2.2.2/rr-1.2.4/sc-2.0.0/sl-1.3.0/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/moment.js" asp-append-version="true"></script>
+
+    <script>
+        $("#From").datepicker('update', moment().startOf('day').format("L"));
+        $("#To").datepicker('update', moment().endOf('day').format("L"));
+
+        function searchDates() {
+            var startDate = moment(new Date($("#From").val())).startOf('day').format("YYYY-MM-DD HH:mm");
+            var endDate = moment(new Date($("#To").val())).endOf('day').format("YYYY-MM-DD HH:mm");
+
+            loadChart(startDate, endDate);
+
+            function loadChart(startDate) {
+                $('#NoLogs').hide();
+                $.ajax({
+                    url: "/api/log/GetLogs",
+                    data: {
+                        "startDate": startDate,
+                        "endDate": endDate
+                    },
+                    'method': "GET",
+                    'contentType': 'application/json',
+                    success: function (data) {
+                        $('#logTable').show();
+                        $("#logTable").DataTable().destroy();
+                        $('#logTable').DataTable({
+                            "aaData": data,
+                            "lengthMenu": [[-1], ["All"]],
+                            "columns": [
+                                { "data": "logKey", "className": 'min' },
+                                {
+                                    "data": "logDate",
+                                    "render": function(value) {
+                                        return moment(new Date(value)).format("MM/DD LT");
+                                    },
+                                    "className": 'nowrap min'
+                                },
+                                { "data": "type", "className": 'min' },
+                                { "data": "severity", "className": 'min' },
+                                { "data": "platform", "className": 'min' },
+                                { "data": "routeDesc", "className": '' },
+                                { "data": "appVersion", "className": 'min' },
+                                { "data": "userKey", "className": 'min' },
+                                { "data": "userId", "className": 'min' },
+                                { "data": "logMessage", "className": '' },
+                            ],
+                            "order": [[0, 'desc']],
+                            dom: 'r',
+                            buttons: [
+                                {
+                                    extend: 'excel',
+                                    text: '<i class="fa fa-file-download"></i>',
+                                    fileName: 'ProductRequestExport',
+                                    title: 'ProductRequestExport',
+                                    className: "btn btn-success btn-sm py-1 px-2"
+                                }
+                            ],
+                            "initComplete": function() {
+                            },
+                            "rowCallback": function( row, data, index ) {
+                                $('td', row).css('background-color', 'transparent');
+                                if ( data["severity"] === "Critical" )
+                                {
+                                    $('td', row).css('color', 'Red');
+                                }
+                                else if ( data["severity"] === "Warning" )
+                                {
+                                    $('td', row).css('color', '#FFBF00');
+                                }
+                                if (data["type"] === "Info")
+                                {
+                                    $('td', row).css('color', 'lightskyblue');
+                                }
+                            }
+                        });
+                    },
+                    fail: function (xhr) {
+                        $('#logTable').hide();
+                        $('#NoLogs').show();
+                        alert(JSON.parse(xhr.responseText));
+                    },
+                    complete(xhr, status) {
+                        if (xhr.status == 404) {
+                            $('#logTable').hide();
+                            $('#NoLogs').show();
+                        }
+                    }
+                });
+            }
+        }
+
+        searchDates();
+
+        setInterval(searchDates, 10000);
+    </script>
+</body>
+</html>
