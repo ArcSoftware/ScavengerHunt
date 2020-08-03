@@ -1,7 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:barcode_scan/barcode_scan.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';

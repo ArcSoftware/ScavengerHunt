@@ -21,7 +21,7 @@ class AppConfig {
     webUrl = "";
     
     appVersion="v1.0.0";
-    supportEmail = "dev.jaket@gmail.com";
+    supportEmail = "";
   }
 
   void updateHeaders() { 
