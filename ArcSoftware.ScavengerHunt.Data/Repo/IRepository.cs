@@ -17,7 +17,7 @@ namespace ArcSoftware.ScavengerHunt.Data.Repo
 
         void CreateMultiple<T>(IEnumerable<T> entities) where T : class;
 
-        void Update<T>(T dbo, T aggregate) where T : class;
+        void Update<T>(T dbo) where T : class;
 
         void UpdateMultiple<T>(IEnumerable<T> toUpdate, IEnumerable<T> updated) where T : class;
 

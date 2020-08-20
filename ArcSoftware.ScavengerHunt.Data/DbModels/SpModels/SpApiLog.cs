@@ -6,7 +6,7 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels.SpModels
     public class SpApiLog
     {
         [Key]
-        public int LogKey { get; set; }
+        public int Id { get; set; }
         public DateTime LogDate { get; set; }
         public string Type { get; set; }
         public string Severity { get; set; }

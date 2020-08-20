@@ -27,7 +27,7 @@ namespace ArcSoftware.ScavengerHunt.Web.Controllers.Api
         {
             try
             {
-                var logs = _sp.GetSpApiLogs(startDate, endDate, userKey);
+                var logs = _sp.GetSpApiLogs(startDate, endDate);
                 return logs.Any() ? (IActionResult)Ok(logs) : NotFound("No logs found in range provided.");
             }
             catch (Exception e)
@@ -48,7 +48,7 @@ namespace ArcSoftware.ScavengerHunt.Web.Controllers.Api
             catch (Exception e)
             {
                 LogApiException(log.UserKey, e);
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
     }

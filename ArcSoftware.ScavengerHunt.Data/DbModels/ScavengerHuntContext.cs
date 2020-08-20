@@ -65,17 +65,10 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels
                     .WithMany(p => p.ApiLog)
                     .HasForeignKey(d => d.SeverityKey)
                     .HasConstraintName("FK__ApiLog__Severity__3C34F16F");
-
-                entity.HasOne(d => d.UserKeyNavigation)
-                    .WithMany(p => p.ApiLog)
-                    .HasForeignKey(d => d.UserKey)
-                    .HasConstraintName("FK__ApiLog__UserKey__3E1D39E1");
             });
 
             modelBuilder.Entity<Challenge>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id");
-
                 entity.Property(e => e.ChallengeName)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -108,18 +101,10 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels
                     .IsRequired()
                     .HasMaxLength(255)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.HuntKeyNavigation)
-                    .WithMany(p => p.Challenge)
-                    .HasForeignKey(d => d.HuntKey)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Challenge__HuntK__282DF8C2");
             });
 
             modelBuilder.Entity<Hunt>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id");
-
                 entity.Property(e => e.CreateDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -134,12 +119,6 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels
                     .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.LastLoadDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.CreateUserKeyNavigation)
-                    .WithMany(p => p.Hunt)
-                    .HasForeignKey(d => d.CreateUserKey)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__Hunt__CreateUser__236943A5");
             });
 
             modelBuilder.Entity<LogSeverity>(entity =>
@@ -186,12 +165,6 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels
                     .HasForeignKey(d => d.PlatformKey)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK__UserDevic__Platf__2FCF1A8A");
-
-                entity.HasOne(d => d.UserKeyNavigation)
-                    .WithMany(p => p.UserDeviceLog)
-                    .HasForeignKey(d => d.UserKey)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserDevic__UserK__2DE6D218");
             });
 
             modelBuilder.Entity<UserGpsLog>(entity =>
@@ -205,12 +178,6 @@ namespace ArcSoftware.ScavengerHunt.Data.DbModels
                 entity.Property(e => e.Latitude).HasColumnType("decimal(9, 6)");
 
                 entity.Property(e => e.Longitude).HasColumnType("decimal(9, 6)");
-
-                entity.HasOne(d => d.UserKeyNavigation)
-                    .WithMany(p => p.UserGpsLog)
-                    .HasForeignKey(d => d.UserKey)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__UserGpsLo__UserK__32AB8735");
             });
 
             modelBuilder.Entity<UserProfile>(entity =>

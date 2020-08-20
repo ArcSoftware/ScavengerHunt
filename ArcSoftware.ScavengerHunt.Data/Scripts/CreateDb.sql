@@ -1,9 +1,9 @@
 CREATE DATABASE [scavenger_hunt]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'scavenger_hunt', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\scavenger_hunt.mdf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
+( NAME = N'scavenger_hunt', FILENAME = N'C:\dev\databases\data\scavenger_hunt.mdf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'scavenger_hunt_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\scavenger_hunt_log.ldf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
+( NAME = N'scavenger_hunt_log', FILENAME = N'C:\dev\databases\logs\scavenger_hunt_log.ldf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
 GO
 
 ALTER DATABASE [scavenger_hunt] SET COMPATIBILITY_LEVEL = 150

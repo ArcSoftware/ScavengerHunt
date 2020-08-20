@@ -1,23 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ArcSoftware.ScavengerHunt.Data.DbModels.EfModels
 {
-    public partial class Hunt
+    public partial class Hunt : DbModelBase
     {
-        public Hunt()
-        {
-            Challenge = new HashSet<Challenge>();
-        }
-
-        public int Id { get; set; }
         public string HuntName { get; set; }
-        public int? CreateUserKey { get; set; }
+        public int CreateUserKey { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? LastLoadDate { get; set; }
-        public bool? IsActive { get; set; }
 
-        public virtual UserProfile CreateUserKeyNavigation { get; set; }
-        public virtual ICollection<Challenge> Challenge { get; set; }
+        public Hunt()
+        {
+        }
+
+        public Hunt(string huntName, int userKey)
+        {
+            HuntName = huntName;
+            CreateUserKey = userKey;
+            CreateDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+        }
+
+        public override string ToString() =>
+            $"[{HuntName}, active: {IsActive}]";
     }
 }

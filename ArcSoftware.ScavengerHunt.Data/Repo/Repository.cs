@@ -47,11 +47,8 @@ namespace ArcSoftware.ScavengerHunt.Data.Repo
             _context.SaveChanges();
         }
 
-        public void Update<T>(T dbo, T aggregate) where T : class
+        public void Update<T>(T dbo) where T : class
         {
-            _context.Entry(dbo).State = EntityState.Detached;
-            _context.Attach(aggregate);
-            _context.Entry(aggregate).State = EntityState.Modified;
             _context.SaveChanges();
         }
 

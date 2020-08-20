@@ -130,3 +130,7 @@ insert into dbo.Platform values ('iOS')
 insert into dbo.Platform values ('Android')
 
 insert into dbo.UserProfile values('System', 'SystemTest', 1)
+
+grant execute on object:: dbo.spGet_ApiLogs to api_svc;
+grant execute on object:: dbo.spPost_ApiLog to api_svc;
+go

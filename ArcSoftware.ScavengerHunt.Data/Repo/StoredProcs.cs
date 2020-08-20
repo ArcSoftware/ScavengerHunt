@@ -16,14 +16,14 @@ namespace ArcSoftware.ScavengerHunt.Data.Repo
             _context = context;
         }
 
-        public IEnumerable<SpApiLog> GetSpApiLogs(DateTime? startDate, DateTime? endDate, int? userKey)
+        public IEnumerable<SpApiLog> GetSpApiLogs(DateTime? startDate, DateTime? endDate)
         {
-            return _context.SpApiLogs.FromSqlRaw($"dbo.spGet_ApiLogs {startDate}, {endDate}, {userKey}");
+            return _context.SpApiLogs.FromSqlInterpolated($"dbo.spGet_ApiLogs {startDate}, {endDate}");
         }
 
         public void PostApiLog(ApiLog apiLog)
         {
-            // _context.Database.ExecuteSqlRaw($"exec dbo.spPost_ApiLog {apiLog.LogTypeKey}, {apiLog.SeverityKey}, {apiLog.PlatformKey}, {apiLog.RouteDesc}, {apiLog.AppVersion}, {apiLog.UserKey}, {apiLog.LogMessage}");
+            _context.Database.ExecuteSqlInterpolated($"exec dbo.spPost_ApiLog {apiLog.LogTypeKey}, {apiLog.SeverityKey}, {apiLog.PlatformKey}, {apiLog.RouteDesc}, {apiLog.AppVersion}, {apiLog.UserKey}, {apiLog.LogMessage}");
         }
     }
 }
