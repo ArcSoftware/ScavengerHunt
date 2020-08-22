@@ -58,6 +58,10 @@ SizedBox loading() {
   );
 }
 
+Color appGreenColor() {
+  return Color(0xff72f200);
+}
+
 Future<void> logException(BuildContext context, AppConfig config, String function, Exception e, bool displayMessage, String customDisplayMessage) async{
   try {
     var ex = (e != null) ? exceptionToString(e) : "Exception was null.";

@@ -1,18 +1,20 @@
 
-import 'package:barcode_scan/barcode_scan.dart';
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:scavenger_hunt/Models/exception_model.dart';
+import 'package:scavenger_hunt/Mock/mock_api.dart';
+import 'package:scavenger_hunt/Models/hunt_model.dart';
+import 'package:scavenger_hunt/Screens/challenge_screen.dart';
 import 'package:scavenger_hunt/app_config.dart';
+import 'package:intl/intl.dart';
 
 import '../main.dart';
 
 class HuntScreen extends StatefulWidget{
   final AppConfig config;
 
-  HuntScreen({Key key, this.config}) : super(key : key);
+  HuntScreen({Key key, @required this.config}) : super(key : key);
 
   @override
   _HState createState() => new _HState();
@@ -20,11 +22,13 @@ class HuntScreen extends StatefulWidget{
 
 class _HState extends State<HuntScreen> {
   _HState();
-  String _testInfo1 = "";
+  List<Hunt> _huntsList = new List();
+  bool _loading = false;
   
   @override
   void initState() {
     super.initState();
+    _getHunts();
   }
 
   @override
@@ -37,47 +41,111 @@ class _HState extends State<HuntScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Scavenger Hunt"),
-        leading: IconButton(
-          icon: Icon(FontAwesomeIcons.question, color: Colors.red, size: 20), 
-          onPressed: () { _scanQR();} 
-        ),
+        leading: Container(),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(FontAwesomeIcons.barcode, color: Color(0xff72f200), size: 30), 
-            onPressed: () { _scanQR();} 
-          )
+          
         ]
       ),
       body: Stack(
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Flexible(child: Text(_testInfo1, style: Theme.of(context).textTheme.headline2, textAlign: TextAlign.center,)),
-            ]
-          )
+          Container(
+            height: MediaQuery.of(context).size.height * 0.90, 
+            width: MediaQuery.of(context).size.width ,
+              padding: EdgeInsets.fromLTRB(00.0, 30.0, 0.0, 0.0),
+              child: Scrollbar(
+                child: RefreshIndicator(
+                  color: Colors.green,
+                  displacement: 15.0,
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(0.0),
+                    itemCount: _huntsList.length,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (context, i) {
+                      var hunt = _huntsList[i];
+                      return Card(
+                        color: Colors.grey[900],
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 2, bottom: 2),
+                            child: ListTile(
+                            onTap: (){ 
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => new ChallengeScreen(config: widget.config)));
+                            },
+                            title: Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(DateFormat('E, MM-dd-yyyy hh:mm a').format(hunt.createDate), style: TextStyle(color: appGreenColor(), fontSize: 13))
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Flexible(
+                                      child: Text("${hunt.huntName}", style: TextStyle(color: Colors.white, fontSize: 18),),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            subtitle: Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Flexible(
+                                      child: Text("Creator: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                                    )
+                                  ],
+                                )
+                              ]
+                            ), 
+                            trailing: Icon(Icons.arrow_forward_ios, color: appGreenColor()),
+                          ))
+                        );
+                      }
+                    ),
+                onRefresh: () async {_getHunts(); } )
+              )
+          ),
+          (_loading) ? loading() : Container()
         ],
       )
     );
   }
 
-  Future _scanQR() async {
+  Future _getHunts() async {
+    setState(() {
+      _huntsList.clear();
+      _loading = true;
+    });
+
     try {
-      ScanResult scanResult = await BarcodeScanner.scan();
-      if (scanResult.rawContent != "") 
-        setState(() {
-          _testInfo1 = scanResult.rawContent;
-        });
-    } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.cameraAccessDenied) {
-        logPermissionDeniedEx(context, super.widget.config, new Exception("Camera permission was denied."));
-      } else {
-        logException(context, widget.config, "Store Home - ScanBarcode (PlatformEx)", e, true, null);
-      }
-    } on FormatException {
-      return;
-    } catch (e) {
-      logException(context, widget.config, "Store Home - ScanBarcode", e, true, null);
+      // final r = RetryOptions(maxAttempts: 2);
+      // var huntCall = await r.retry(
+      //   () => http.get(widget.config.apiUrl + "company/GetAllHunts",
+      //   headers: widget.config.apiHeaders).timeout(const Duration(seconds: 10)),
+      //   retryIf: (e) => e is SocketException || e is TimeoutException);
+      // validateContainsData(huntCall);
+
+      var mockApi = new MockApi();
+      await Future.delayed(const Duration(seconds: 1));
+
+      setState(() {
+        // _huntsList = huntFromJson(huntCall.body);
+        _huntsList = huntFromJson(mockApi.huntListRet);
+      });
+
+    } on SocketException catch (e) {
+      print(e.toString());
+      Navigator.of(context).pop();
+    }catch (e) {
+      logException(context, widget.config, "TranType Screen - GetTranTypes", e, false,  null);
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 }

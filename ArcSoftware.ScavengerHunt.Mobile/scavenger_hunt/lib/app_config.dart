@@ -11,14 +11,14 @@ class AppConfig {
   String deviceInfo;
 
   AppConfig() {   
-    apiUrl = "";
+    apiUrl = "https:///api/";
     apiKey = "";
     apiHeaders = {
       "apiKey": apiKey, 
       "content-type": "application/json",
       "platform": "${getPlatformLogType()}"
     };
-    webUrl = "";
+    webUrl = "https:///";
     
     appVersion="v1.0.0";
     supportEmail = "";
