@@ -40,7 +40,7 @@ class _HState extends State<HuntScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scavenger Hunt"),
+        title: Text("Select a Hunt"),
         leading: Container(),
         actions: <Widget>[
           
@@ -48,66 +48,102 @@ class _HState extends State<HuntScreen> {
       ),
       body: Stack(
         children: <Widget>[
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Image.asset('images/img1.png')
+          ),
+          Align(
+            alignment: Alignment(0.0, 1),
+            child: Container(
+              height: 120, 
+              width: MediaQuery.of(context).size.width,
+              decoration: new BoxDecoration(
+                color: Colors.red[900],
+                borderRadius: new BorderRadius.all(const Radius.circular(20.0),
+                )
+              ),
+              padding: EdgeInsets.only(top: 2, bottom: 2),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("Kaitlyn", style: TextStyle(color: appGreenColor(), fontSize: 26))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Flexible(
+                          child: Text("By: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                        )
+                      ],
+                    )
+                  ]
+                )
+              )
+          ),
           Container(
             height: MediaQuery.of(context).size.height * 0.90, 
             width: MediaQuery.of(context).size.width ,
-              padding: EdgeInsets.fromLTRB(00.0, 30.0, 0.0, 0.0),
-              child: Scrollbar(
-                child: RefreshIndicator(
-                  color: Colors.green,
-                  displacement: 15.0,
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(0.0),
-                    itemCount: _huntsList.length,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (context, i) {
-                      var hunt = _huntsList[i];
-                      return Card(
-                        color: Colors.grey[900],
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 2, bottom: 2),
-                            child: ListTile(
-                            onTap: (){ 
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => new ChallengeScreen(config: widget.config)));
-                            },
-                            title: Column(
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(DateFormat('E, MM-dd-yyyy hh:mm a').format(hunt.createDate), style: TextStyle(color: appGreenColor(), fontSize: 13))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: Text("${hunt.huntName}", style: TextStyle(color: Colors.white, fontSize: 18),),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                            subtitle: Column(
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: Text("Creator: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
-                                    )
-                                  ],
-                                )
-                              ]
-                            ), 
-                            trailing: Icon(Icons.arrow_forward_ios, color: appGreenColor()),
-                          ))
-                        );
-                      }
-                    ),
-                onRefresh: () async {_getHunts(); } )
-              )
+            padding: EdgeInsets.fromLTRB(00.0, 30.0, 0.0, 0.0),
+            child: Scrollbar(
+              child: RefreshIndicator(
+                color: Colors.green,
+                displacement: 15.0,
+                child: ListView.builder(
+                  padding: EdgeInsets.all(0.0),
+                  itemCount: _huntsList.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemBuilder: (context, i) {
+                    var hunt = _huntsList[i];
+                    return Card(
+                      color: Colors.grey[900],
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 2, bottom: 2),
+                          child: ListTile(
+                          onTap: (){ 
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => new ChallengeScreen(config: widget.config)));
+                          },
+                          title: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(DateFormat('E, MM-dd-yyyy hh:mm a').format(hunt.createDate), style: TextStyle(color: appGreenColor(), fontSize: 13))
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text("${hunt.huntName}", style: TextStyle(color: Colors.white, fontSize: 18),),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                          subtitle: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text("By: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                                  )
+                                ],
+                              )
+                            ]
+                          ), 
+                          trailing: Icon(Icons.arrow_forward_ios, color: appGreenColor()),
+                        ))
+                      );
+                    }
+                  ),
+              onRefresh: () async {_getHunts(); } )
+            )
           ),
           (_loading) ? loading() : Container()
         ],

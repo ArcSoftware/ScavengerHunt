@@ -1,17 +1,14 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:scavenger_hunt/Models/apilog_model.dart';
-import 'package:scavenger_hunt/Models/exception_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:scavenger_hunt/Screens/hunt_screen.dart';
+import 'package:scavenger_hunt/Mock/mock_api.dart';
+import 'package:scavenger_hunt/Models/animated_text_model.dart';
+import 'package:scavenger_hunt/Screens/animated_text_screen.dart';
 import 'package:scavenger_hunt/app_config.dart';
 
 import '../main.dart';
-
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -87,7 +84,7 @@ class _LSS extends State<LoginScreen> {
               ],
             ),
           ),
-           Align(
+          Align(
             alignment: Alignment(0.0, 0.9),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -143,6 +140,8 @@ class _LSS extends State<LoginScreen> {
       }
 
       _config.updateHeaders();
+       await Future.delayed(const Duration(seconds: 1));
+       
       setState(() {
         _message = "Communicating with server.";
       });
@@ -177,9 +176,24 @@ class _LSS extends State<LoginScreen> {
         _message = "Getting Hunt Info.";
       });
 
+      // final r = RetryOptions(maxAttempts: 2);
+      // var loginTextCall = await r.retry(
+      //   () => http.get(_config.apiUrl + "animation/LoginText",
+      //   headers: _config.apiHeaders).timeout(const Duration(seconds: 10)),
+      //   retryIf: (e) => e is SocketException || e is TimeoutException);
+      // validateContainsData(loginTextCall);
+
+      var mockApi = new MockApi();
+      await Future.delayed(const Duration(seconds: 1));
+      var animatedText = animatedTextFromJson(mockApi.firstLoginTextRet);
+
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => new HuntScreen(config: _config)
-      ));
+        builder: (context) => new AnimatedTextScreen(config: _config, animatedText: animatedText)
+      )).whenComplete(() => {
+        setState(() {
+          _message = "Thanks for using Scavenger Hunt.";
+          _buttonOrLoad = buttonOrLoading(true);
+        })});
 
 
     } catch (e) {
