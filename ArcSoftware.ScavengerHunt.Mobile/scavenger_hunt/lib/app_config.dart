@@ -8,6 +8,7 @@ class AppConfig {
   String webUrl;
   String appVersion;
   String supportEmail;
+  String supportPhone;
   String deviceInfo;
 
   AppConfig() {   
@@ -19,7 +20,7 @@ class AppConfig {
       "platform": "${getPlatformLogType()}"
     };
     webUrl = "https:///";
-    
+    supportPhone = "";
     appVersion="v1.0.0";
     supportEmail = "";
   }

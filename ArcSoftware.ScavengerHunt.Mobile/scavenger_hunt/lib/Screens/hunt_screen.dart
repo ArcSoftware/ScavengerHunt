@@ -1,6 +1,5 @@
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:scavenger_hunt/Mock/mock_api.dart';
@@ -53,37 +52,37 @@ class _HState extends State<HuntScreen> {
             height: MediaQuery.of(context).size.height,
             child: Image.asset('images/img1.png')
           ),
-          Align(
-            alignment: Alignment(0.0, 1),
-            child: Container(
-              height: 120, 
-              width: MediaQuery.of(context).size.width,
-              decoration: new BoxDecoration(
-                color: Colors.red[900],
-                borderRadius: new BorderRadius.all(const Radius.circular(20.0),
-                )
-              ),
-              padding: EdgeInsets.only(top: 2, bottom: 2),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Kaitlyn", style: TextStyle(color: appGreenColor(), fontSize: 26))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Flexible(
-                          child: Text("By: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
-                        )
-                      ],
-                    )
-                  ]
-                )
-              )
-          ),
+          // Align(
+          //   alignment: Alignment(0.0, 1),
+          //   child: Container(
+          //     height: 120, 
+          //     width: MediaQuery.of(context).size.width,
+          //     decoration: new BoxDecoration(
+          //       color: Colors.red[900],
+          //       borderRadius: new BorderRadius.all(const Radius.circular(20.0),
+          //       )
+          //     ),
+          //     padding: EdgeInsets.only(top: 2, bottom: 2),
+          //       child: Column(
+          //         children: <Widget>[
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: <Widget>[
+          //               Text("Kaitlyn", style: TextStyle(color: appGreenColor(), fontSize: 26))
+          //             ],
+          //           ),
+          //           Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             children: <Widget>[
+          //               Flexible(
+          //                 child: Text("By: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
+          //               )
+          //             ],
+          //           )
+          //         ]
+          //       )
+          //     )
+          // ),
           Container(
             height: MediaQuery.of(context).size.height * 0.90, 
             width: MediaQuery.of(context).size.width ,
@@ -103,10 +102,7 @@ class _HState extends State<HuntScreen> {
                       child: Padding(
                         padding: EdgeInsets.only(top: 2, bottom: 2),
                           child: ListTile(
-                          onTap: (){ 
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => new ChallengeScreen(config: widget.config)));
-                          },
+                          onTap: (){ _loadHunt(hunt.id); },
                           title: Column(
                             children: <Widget>[
                               Row(
@@ -173,15 +169,43 @@ class _HState extends State<HuntScreen> {
         _huntsList = huntFromJson(mockApi.huntListRet);
       });
 
-    } on SocketException catch (e) {
-      print(e.toString());
-      Navigator.of(context).pop();
-    }catch (e) {
-      logException(context, widget.config, "TranType Screen - GetTranTypes", e, false,  null);
+    } catch (e) {
+      logException(context, widget.config, "Hunt Screen - GetAllHunts", e, false,  null);
     } finally {
       setState(() {
         _loading = false;
       });
     }
+  }
+
+  Future _loadHunt(int challengeKey) async {
+    setState(() {
+      _huntsList.clear();
+      _loading = true;
+    });
+
+    try {
+      // final r = RetryOptions(maxAttempts: 2);
+      // var challengeCall = await r.retry(
+      //   () => http.get(widget.config.apiUrl + "company/GetChallenges?challengeKey=" + challengeKey,
+      //   headers: widget.config.apiHeaders).timeout(const Duration(seconds: 10)),
+      //   retryIf: (e) => e is SocketException || e is TimeoutException);
+      // validateContainsData(huntCall);
+
+      var mockApi = new MockApi();
+      await Future.delayed(const Duration(seconds: 1));
+
+      // var challengeList = challengeFromJson(challengeCall.body);
+      var challengeList = mockApi.challengeListRet;
+      
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => new ChallengeScreen(config: widget.config, challengeList: challengeList, challengeIndex: 0)
+      )).whenComplete(() => { _getHunts()});
+
+
+    } catch (e) {
+      logException(context, widget.config, "Hunt Screen - LoadHunt", e, false,  null);
+      _getHunts();
+    } 
   }
 }

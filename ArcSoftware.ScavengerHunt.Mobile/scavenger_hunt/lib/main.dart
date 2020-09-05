@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
       ),
       home: LoginScreen(),
       debugShowCheckedModeBanner: false,
+      showPerformanceOverlay: false,
     );
   }
 }

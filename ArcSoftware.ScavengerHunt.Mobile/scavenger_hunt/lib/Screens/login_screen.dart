@@ -3,9 +3,9 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:scavenger_hunt/Mock/mock_api.dart';
-import 'package:scavenger_hunt/Models/animated_text_model.dart';
+import 'package:scavenger_hunt/MockApi/privateHunt.dart';
 import 'package:scavenger_hunt/Screens/animated_text_screen.dart';
+import 'package:scavenger_hunt/Screens/challenge_screen.dart';
 import 'package:scavenger_hunt/app_config.dart';
 
 import '../main.dart';
@@ -35,45 +35,33 @@ class _LSS extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(" "),
-      // ),
       body: Stack(
         children: <Widget> [
-          SingleChildScrollView(
-            scrollDirection: Axis.vertical,
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.green[700],
+              image: DecorationImage(
+                fit: BoxFit.fitHeight,
+                image: AssetImage("images/loginImg.png")
+              )
+            )
+          ),
+          Align(
+            alignment: Alignment(0.0, 0.45),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Padding(padding: EdgeInsets.all(70.0)),
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: <Widget>[
-                      // App logo to go here
-                      // SizedBox(
-                      //   height:200.0,
-                      //   child:
-                      //   CachedNetworkImage(
-                      //     imageUrl: "${config.apiUrl}file/public/logo.png",
-                      //     placeholder: (context, url) => new CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.green)),
-                      //     errorWidget: (context, url, error) => new Icon(Icons.error, color: Colors.red),
-                      //   )
-                      // ),
-                      Padding(padding: EdgeInsets.all(20),),
-                      Text("Welcome!", style: Theme.of(context).textTheme.headline1),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                         Flexible(child: Text(_message, style: Theme.of(context).textTheme.headline2, textAlign: TextAlign.center,)),
-                        ]
-                      )
-                    ],
-                  )
-                ),
+                Text("Welcome!", style: TextStyle(color: appGreenColor(), fontSize: 40)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(child: Text(_message, style: Theme.of(context).textTheme.headline2, textAlign: TextAlign.center,)),
+                  ]
+                )
               ],
-            ),
+            )
           ),
           Align(
             alignment: Alignment(0.0, 0.7),
@@ -140,7 +128,7 @@ class _LSS extends State<LoginScreen> {
       }
 
       _config.updateHeaders();
-       await Future.delayed(const Duration(seconds: 1));
+       await Future.delayed(const Duration(milliseconds: 400));
        
       setState(() {
         _message = "Communicating with server.";
@@ -171,7 +159,12 @@ class _LSS extends State<LoginScreen> {
         return;
       }
 
-      //Get questions
+      await Future.delayed(const Duration(milliseconds: 600));
+      setState(() {
+        _message = "Hacking your mainframe...";
+      });
+
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         _message = "Getting Hunt Info.";
       });
@@ -184,11 +177,25 @@ class _LSS extends State<LoginScreen> {
       // validateContainsData(loginTextCall);
 
       var mockApi = new MockApi();
-      await Future.delayed(const Duration(seconds: 1));
-      var animatedText = animatedTextFromJson(mockApi.firstLoginTextRet);
+      await Future.delayed(const Duration(milliseconds: 400));
+      // var animatedText = animatedTextFromJson(mockApi.firstLoginTextRet);
+      var animatedText = mockApi.firstLoginMessages;
+
+      //skipping hunt selection screen for now
+      // var proceedRoute = MaterialPageRoute(
+      //   builder: (context) => new HuntScreen(config: _config)
+      // );
+      var proceedRoute = MaterialPageRoute(
+        builder: (context) => new ChallengeScreen(config: _config, challengeList: mockApi.challengeListRet, challengeIndex: 0));
+
+      setState(() {
+        _message = "Hunt Info loaded! Launching!";
+      });
+      await Future.delayed(const Duration(milliseconds: 400));
 
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => new AnimatedTextScreen(config: _config, animatedText: animatedText)
+        builder: (context) => new AnimatedTextScreen(config: _config, animatedText: animatedText, 
+          proceedRoute: proceedRoute, proceedText: "I'm ready!")
       )).whenComplete(() => {
         setState(() {
           _message = "Thanks for using Scavenger Hunt.";

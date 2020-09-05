@@ -9,8 +9,11 @@ import '../main.dart';
 class AnimatedTextScreen extends StatefulWidget{
   final AppConfig config;
   final List<AnimatedText> animatedText;
+  final Route<Object> proceedRoute;
+  final String proceedText;
 
-  AnimatedTextScreen({Key key, @required this.config, @required this.animatedText}) : super(key : key);
+  AnimatedTextScreen({Key key, @required this.config, @required this.animatedText, 
+    @required this.proceedRoute, @required this.proceedText}) : super(key : key);
 
   @override
   _ATState createState() => new _ATState();
@@ -28,7 +31,7 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
   
   @override
   void initState() {
-    _loadText();
+    _firstLoadWithDelay();
     super.initState();
   }
 
@@ -81,7 +84,7 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
                   color: Colors.transparent,
                   child: Row(
                     children: <Widget>[
-                      Text("< Make me type it all again", style: TextStyle(fontSize: 11, fontFamily: 'Courier New')),
+                      Text("< Make me type it again", style: TextStyle(fontSize: 11, fontFamily: 'Courier New')),
                     ],
                   ),
                 ) : Container()
@@ -92,8 +95,14 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
       )
     );
   }
+  
+  Future _firstLoadWithDelay() async {
+    await Future.delayed(Duration(seconds: 1));
+    _loadText();
+  }
 
   Future _loadText() async {
+
     setState(() {
       _messageIndex = (_replayable) ? 0 : _messageIndex + 1;
       _actions = Container();
@@ -115,7 +124,7 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
     await controller.forward();
     controller.dispose();
 
-    await Future.delayed(Duration(microseconds: 300));
+    await Future.delayed(Duration(milliseconds: 600));
     setState(() {
       if (_messageIndex  != (widget.animatedText.length - 1)) {
         _actions = RaisedButton(
@@ -135,14 +144,14 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
       } else {
         _actions = RaisedButton(
           elevation: 10.0,
-          onPressed: () {_loadText();},
+          onPressed: () { Navigator.push(context, widget.proceedRoute); },
           textColor: Colors.black,
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 100.0),
           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
           color: Color(0xff72f200),
           child: Row(
             children: <Widget>[
-              Text("Pick a Hunt", style: TextStyle(fontSize: 20))
+              Text(widget.proceedText, style: TextStyle(fontSize: 20))
             ],
           ),
         );
