@@ -36,7 +36,9 @@ class _FHState extends State<FinishedHuntScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new WillPopScope(
+      onWillPop: () async => false,
+      child:Scaffold(
         body: Stack(
           children: <Widget>[
             CarouselSlider(
@@ -78,7 +80,7 @@ class _FHState extends State<FinishedHuntScreen> {
           ],
         )
       )
-    ;
+    );
   }
 
   //Util Functions

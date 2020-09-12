@@ -20,7 +20,7 @@ class AppConfig {
       "platform": "${getPlatformLogType()}"
     };
     webUrl = "https:///";
-    supportPhone = "";
+    supportPhone = "7049758353";
     appVersion="v1.0.0";
     supportEmail = "";
   }

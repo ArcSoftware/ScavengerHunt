@@ -66,7 +66,9 @@ class _CState extends State<ChallengeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
         appBar: AppBar(
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +77,7 @@ class _CState extends State<ChallengeScreen> {
                 Icon(Icons.gps_fixed, size: 25, color: appGreenColor()):
                 Icon(Icons.gps_not_fixed, size: 25, color: Colors.red),
               Padding(padding: EdgeInsets.only(left: 5)),
-              Text((_inRange) ? "In GPS Range!" :"Challenge ${(widget.challengeIndex + 1)}")
+              Text((_inRange) ? "In GPS Range!" :"Challenge ${(widget.challengeIndex == 0) ? 'Demo' : (widget.challengeIndex)}")
             ],
           ),
           leading: IconButton(
@@ -211,7 +213,7 @@ class _CState extends State<ChallengeScreen> {
           ],
         )
       )
-    ;
+    );
   }
 
   //Util Functions

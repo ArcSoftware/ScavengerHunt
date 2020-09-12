@@ -43,56 +43,59 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(""),
-        leading: Container(),
-        actions: <Widget>[
-          
-        ]
-      ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            margin: new EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
-            child: _charCount == null ? null : new AnimatedBuilder(
-              animation: _charCount,
-              builder: (BuildContext context, Widget child) {
-                String text = _currentString.substring(0, _charCount.value);
-                return new Text(text, style: TextStyle(color: appGreenColor(), fontFamily: 'Courier New', fontSize: 20));
-              },
-            )
-          ),
-          Align(
-            alignment: Alignment(0.0, 0.7),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                _actions
-              ],
+    return new WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(""),
+          leading: Container(),
+          actions: <Widget>[
+            
+          ]
+        ),
+        body: Stack(
+          children: <Widget>[
+            Container(
+              margin: new EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              child: _charCount == null ? null : new AnimatedBuilder(
+                animation: _charCount,
+                builder: (BuildContext context, Widget child) {
+                  String text = _currentString.substring(0, _charCount.value);
+                  return new Text(text, style: TextStyle(color: appGreenColor(), fontFamily: 'Courier New', fontSize: 20));
+                },
+              )
             ),
-          ),
-          Align(
-            alignment: Alignment(0.0, 0.92),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                (_replayable) ? RaisedButton(
-                  elevation: 10.0,
-                  onPressed: () {_loadText();},
-                  textColor: appGreenColor(),
-                  padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 100.0),
-                  color: Colors.transparent,
-                  child: Row(
-                    children: <Widget>[
-                      Text("< Make me type it again", style: TextStyle(fontSize: 11, fontFamily: 'Courier New')),
-                    ],
-                  ),
-                ) : Container()
-              ],
+            Align(
+              alignment: Alignment(0.0, 0.7),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  _actions
+                ],
+              ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment(0.0, 0.92),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  (_replayable) ? RaisedButton(
+                    elevation: 10.0,
+                    onPressed: () {_loadText();},
+                    textColor: appGreenColor(),
+                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 100.0),
+                    color: Colors.transparent,
+                    child: Row(
+                      children: <Widget>[
+                        Text("< Make me type it again", style: TextStyle(fontSize: 11, fontFamily: 'Courier New')),
+                      ],
+                    ),
+                  ) : Container()
+                ],
+              ),
+            ),
+          ],
+        )
       )
     );
   }
@@ -114,7 +117,7 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
 
   Future _progressTextAnimation() async {
     AnimationController controller = new AnimationController(
-      duration: Duration(milliseconds: widget.animatedText[_messageIndex].textSpeed),
+      duration: Duration(milliseconds: (widget.animatedText[_messageIndex].text.length * 30)),
       vsync: this,
     );
     setState(() {
