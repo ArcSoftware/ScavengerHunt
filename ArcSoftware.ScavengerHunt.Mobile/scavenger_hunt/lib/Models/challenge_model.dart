@@ -19,6 +19,7 @@ class Challenge {
         this.solutionQr,
         this.solutionLat,
         this.solutionLong,
+        this.solutionImg,
         this.betweenChallengeText,
         this.id,
         this.isActive,
@@ -33,6 +34,7 @@ class Challenge {
     String solutionQr;
     double solutionLat;
     double solutionLong;
+    String solutionImg;
     List<AnimatedText> betweenChallengeText;
     int id;
     bool isActive;
@@ -47,6 +49,7 @@ class Challenge {
         solutionQr: json["solutionQr"] == null ? null : json["solutionQr"],
         solutionLat: json["solutionLat"] == null ? null : json["solutionLat"],
         solutionLong: json["solutionLong"] == null ? null : json["solutionLong"],
+        solutionImg: json["solutionImg"],
         betweenChallengeText: json["betweenChallengeText"] == null ? null : animatedTextFromJson(json["betweenChallengeText"]),
         id: json["id"],
         isActive: json["isActive"],

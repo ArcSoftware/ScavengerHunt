@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:scavenger_hunt/Models/challenge_model.dart';
 import 'package:scavenger_hunt/Screens/animated_text_screen.dart';
+import 'package:scavenger_hunt/Screens/finished_hunt_screen.dart';
 import 'package:scavenger_hunt/app_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,17 +34,24 @@ class _CState extends State<ChallengeScreen> {
   ScrollController _scrollController = ScrollController();
   TextEditingController _searchController = new TextEditingController();
 
-
   Challenge _challenge;
   List<ChallengeCard> _shownCards = new List();
-  bool _first, _inRange;
+  bool _first, _inRange, _solved;
+  AssetImage _bgImg;
+  IconButton _forwardBtn;
   
   @override
   void initState() {
     _challenge = widget.challengeList[widget.challengeIndex];
     _first = true;
     _inRange = false;
+    _solved = false;
     _gpsTimer = new Timer.periodic(_gpsQueryInterval, (timer) {_checkLocation();});
+    _bgImg = new AssetImage(_challenge.img);
+    _forwardBtn = IconButton(
+      icon: Icon(FontAwesomeIcons.barcode, color: Color(0xff72f200), size: 30), 
+      onPressed: () { HapticFeedback.selectionClick(); _searchBarcode(); } 
+    );
     _loadPageAnimated();
     super.initState();
   }
@@ -73,14 +81,12 @@ class _CState extends State<ChallengeScreen> {
           leading: IconButton(
             icon: Icon(FontAwesomeIcons.question, color: Colors.red, size: 20), 
             onPressed: () { 
+              HapticFeedback.selectionClick();
               _helpButton();
             } 
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(FontAwesomeIcons.barcode, color: Color(0xff72f200), size: 30), 
-              onPressed: () { _searchBarcode(); } 
-            )
+            _forwardBtn
           ]
         ),
         body: Stack(
@@ -111,10 +117,10 @@ class _CState extends State<ChallengeScreen> {
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      color: Colors.green[700],
+                      color: Colors.grey[900],
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage(_challenge.img)
+                        image: _bgImg
                       )
                     )
                   ),
@@ -124,93 +130,91 @@ class _CState extends State<ChallengeScreen> {
               ]
             ),
             ListView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .52, bottom: 30),
-                itemCount: _shownCards.length,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemBuilder: (context, i) {
-                  var card = _shownCards[i];
-                  var color = card.getChallengeCardColor();
-                  var icon;
-                  if (_shownCards[i].type == ChallengeCardType.challengeText) {
-                    icon = FontAwesomeIcons.search;
-                  } else if (_shownCards[i].type == ChallengeCardType.hint) {
-                    icon = FontAwesomeIcons.question;
-                  } else {
-                    icon = FontAwesomeIcons.info;
-                  }
-              
-                  return Stack(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(top: 50),
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(2, 0, 2, 5),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: color,
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)), 
-                            color: Colors.black, 
-                            boxShadow: [BoxShadow(color: color, blurRadius: 15.0)]
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 20, bottom: 20),
-                            child: ListTile(
-                              onTap: (){ },
-                              title: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(card.cardheader, style: TextStyle(color: appGreenColor(), fontSize: 13))
-                                    ],
-                                  ),
-                                  Padding(padding: EdgeInsets.only(top: 5)),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Flexible(
-                                        child: Text(card.bodyText, style: TextStyle(color: Colors.white, fontSize: 18)),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          )
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: 80,
-                          padding: EdgeInsets.fromLTRB(2, 20, 2, 20),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: color,
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)), 
-                            color: Colors.grey[900], 
-                            boxShadow: [BoxShadow(color: color, blurRadius: 5.0)]),
-                          child: Align(
-                            alignment: Alignment.center, 
-                            child: Icon(icon, color: appGreenColor(), size: 30) 
-                          ),
-                        )
-                      )
-                    ],
-                  );
+              controller: _scrollController,
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .52, bottom: 30),
+              itemCount: _shownCards.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context, i) {
+                var card = _shownCards[i];
+                var color = card.getChallengeCardColor();
+                var icon;
+                if (_shownCards[i].type == ChallengeCardType.challengeText) {
+                  icon = FontAwesomeIcons.search;
+                } else if (_shownCards[i].type == ChallengeCardType.hint) {
+                  icon = FontAwesomeIcons.question;
+                } else {
+                  icon = FontAwesomeIcons.bullseye;
                 }
-              )
+            
+                return Stack(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 50),
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(2, 0, 2, 5),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: color,width: 3),
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)), 
+                          color: Colors.black, 
+                          boxShadow: [BoxShadow(color: color, blurRadius: 15.0)]
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          child: ListTile(
+                            onTap: (){ },
+                            title: Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(card.cardheader, style: TextStyle(color: appGreenColor(), fontSize: 13))
+                                  ],
+                                ),
+                                Padding(padding: EdgeInsets.only(top: 5)),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Flexible(
+                                      child: Text(card.bodyText, style: TextStyle(color: Colors.white, fontSize: 18)),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        )
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 80,
+                        padding: EdgeInsets.fromLTRB(2, 20, 2, 20),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: color,
+                            width: 3,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)), 
+                          color: Colors.grey[900], 
+                          boxShadow: [BoxShadow(color: color, blurRadius: 5.0)]),
+                        child: Align(
+                          alignment: Alignment.center, 
+                          child: Icon(icon, color: appGreenColor(), size: 30) 
+                        ),
+                      )
+                    )
+                  ],
+                );
+              }
+            )
           ],
         )
       )
     ;
   }
 
+  //Util Functions
   Future _loadPageAnimated() async {
     await Future.delayed(Duration(seconds: 1));
     setState(() {
@@ -226,8 +230,35 @@ class _CState extends State<ChallengeScreen> {
     });
   }
 
+  Future _checkLocation() async {
+    var location = new Location();
+    var locationData = await location.getLocation();
+    print("${locationData.latitude} ${locationData.longitude}");
+    if(locationData == null) throw new PlatformException(code: "PERMISSION_DENIED");
+
+    var p = 0.017453292519943295; // Pi / 180
+    var c = cos;
+    var a = 0.5 - c((_challenge.solutionLat - locationData.latitude) * p)/2 + 
+      c(locationData.latitude * p) * c(_challenge.solutionLat * p) * (1 - c((_challenge.solutionLong - locationData.longitude) * p)) / 2;
+    var d = 12642 * asin(sqrt(a)); // 2 * R; R = 6371km
+    setState(() {
+      _inRange = (d < 1.60934);
+    });
+  }
+
+  Future _launchUrl(String url) async {
+    var command = url;
+    if (await canLaunch(command)) {
+      launch(command).timeout(const Duration(seconds: 15));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   Future _addCard() async {
     if (_shownCards.length == 0) return;
+    HapticFeedback.selectionClick();
+
     setState(() {
       if (_shownCards.length == 1) {
         _shownCards.add(new ChallengeCard(
@@ -242,22 +273,19 @@ class _CState extends State<ChallengeScreen> {
           type: ChallengeCardType.hint  
         ));
       } else {
-        _shownCards.add(new ChallengeCard(
-          cardheader: 'Solution', 
-          bodyText: _challenge.solutionText,
-          type: ChallengeCardType.solution  
-        ));
+        _viewSolution(false);
       } 
-      
     });
+
     await Future.delayed(Duration(milliseconds: 500));
     _scrollController.animateTo(
-    _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.ease,
+      _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.ease,
     );
   }
 
+  //Help Action Function
   Future _helpButton() async {
     var buttonText = "I need a hint!";
     if (_shownCards.length == 2) {
@@ -276,7 +304,7 @@ class _CState extends State<ChallengeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            (_shownCards.length >= 3) ? 
+            (_solved || _shownCards.length >= 3) ? 
               Padding(
                 padding: EdgeInsets.only(bottom: 40),
                 child: RaisedButton(
@@ -291,7 +319,7 @@ class _CState extends State<ChallengeScreen> {
                   child: Text("View Location", style: TextStyle(fontSize: 20, color: Colors.white)),
                 )
               ) : Container(),
-            (_shownCards.length <= 3) ?
+            (!_solved) ?
               RaisedButton(
                 elevation: 10.0,
                 onPressed: () {  
@@ -336,67 +364,7 @@ class _CState extends State<ChallengeScreen> {
     showDialog(context: context, builder: (BuildContext context) => alert);
   }
 
-  Future _solutionCheck(String barcode, bool scanned) async {
-    bool correct = barcode == _challenge.solutionQr; 
-    var icon = correct ? FontAwesomeIcons.check : FontAwesomeIcons.code;
-    var message = correct ? 
-      (widget.challengeIndex == 0 ) ? "Well done!" :
-       "Correct! ${_challenge.solutionText}" : "I'm sorry, but this is not the solution.";
-
-    var alert = new AlertDialog(
-      backgroundColor: Colors.black45,
-      elevation: 5000,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20.0))
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(icon, color: correct ? Colors.green : Colors.red),
-              ],
-            ), 
-            Row(
-              children: <Widget>[
-                Flexible(child: Text(message, style: TextStyle(color: Colors.white)))
-              ],
-            )
-          ], 
-        )
-      ), 
-      actions: <Widget>[
-        correct ? 
-          FlatButton(
-            child: Text("Continue!", style: TextStyle(color: appGreenColor())),
-            onPressed: () {
-              var proceedRoute = MaterialPageRoute(
-                builder: (context) => new ChallengeScreen(config: widget.config, challengeList: widget.challengeList, 
-                  challengeIndex: (widget.challengeIndex + 1))
-              );
-
-              if (_challenge.betweenChallengeText == null) {
-                Navigator.push(context, proceedRoute);
-              } else {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => new AnimatedTextScreen(config: widget.config, animatedText: _challenge.betweenChallengeText,
-                    proceedRoute: proceedRoute, proceedText: "Next Challenge!")));
-              }
-            }
-          ) :
-          FlatButton(
-            child: const Text("Try again", style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }
-          )
-      ]
-    );
-    showDialog(context: context, builder: (BuildContext context) => alert);
-  }
-
+  //Barcode Action Functions
   Future _searchBarcode() async {
     var alert = new AlertDialog(
       backgroundColor: Colors.black45,
@@ -514,7 +482,7 @@ class _CState extends State<ChallengeScreen> {
                             style: TextStyle(color: Colors.black, fontSize: 20),
                             autofocus: true,
                             decoration: InputDecoration(
-                              hintText: "  Type a UPC number..",
+                              hintText: "  Type a UPC..",
                               hintStyle: TextStyle(color: Colors.grey, fontSize: 11),
                               contentPadding: EdgeInsets.all(0.0),
                             ),
@@ -589,28 +557,100 @@ class _CState extends State<ChallengeScreen> {
     }
   }
 
-  Future _checkLocation() async {
-    var location = new Location();
-    var locationData = await location.getLocation();
-    if(locationData == null) throw new PlatformException(code: "PERMISSION_DENIED");
+  //Solution Functions
+  Future _solutionCheck(String barcode, bool scanned) async {
+    print(barcode);
+    bool correct = scanned ? (barcode == _challenge.solutionQr) :
+      _challenge.solutionQr.contains(barcode);
+    String message = "I'm sorry, but this is not the solution.";
+    if (correct) {
+      message = "Correct!";
+      HapticFeedback.heavyImpact();
+      _viewSolution(true);
+    } else {
+      HapticFeedback.vibrate();
+    }
 
-    var p = 0.017453292519943295; // Pi / 180
-    var c = cos;
-    var a = 0.5 - c((_challenge.solutionLat - locationData.latitude) * p)/2 + 
-      c(locationData.latitude * p) * c(_challenge.solutionLat * p) * (1 - c((_challenge.solutionLong - locationData.longitude) * p)) / 2;
-    var d = 12642 * asin(sqrt(a)); // 2 * R; R = 6371km
-    print(d);
+    var alert = new AlertDialog(
+      backgroundColor: Colors.black45,
+      elevation: 5000,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0))
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Flexible(child: Text(message, style: TextStyle(color: Colors.white)))
+              ],
+            )
+          ], 
+        )
+      ), 
+      actions: <Widget>[
+        correct ? 
+          FlatButton(
+            child: Text("Continue!", style: TextStyle(color: appGreenColor())),
+            onPressed: () { _continue(); }
+          ) :
+          FlatButton(
+            child: const Text("Try again", style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }
+          )
+      ]
+    );
+
+    if (correct) await Future.delayed(Duration(seconds: 1));
+    showDialog(context: context, builder: (BuildContext context) => alert);
+  }
+
+  Future _viewSolution(allowContinue) async {
     setState(() {
-      _inRange = (d < 1.60934);
+      _shownCards.clear();
+      _shownCards.add(new ChallengeCard(
+        cardheader: 'Solution', 
+        bodyText: _challenge.solutionText,
+        type: ChallengeCardType.solution  
+      ));
+      _solved = true;
+      if (allowContinue) {
+        _forwardBtn = IconButton(
+          icon: Icon(Icons.arrow_forward_ios, color: appGreenColor(), size: 30), 
+          onPressed: () { _continue(); } 
+        );
+      } 
+      
+      _bgImg = new AssetImage(_challenge.solutionImg);
     });
   }
 
-  Future _launchUrl(String url) async {
-    var command = url;
-    if (await canLaunch(command)) {
-      launch(command).timeout(const Duration(seconds: 15));
+  Future _continue() async {
+    _gpsTimer.cancel();
+    String proceedText = "Next Challenge!";
+
+    var proceedRoute = MaterialPageRoute(
+      builder: (context) => new ChallengeScreen(config: widget.config, challengeList: widget.challengeList, 
+        challengeIndex: (widget.challengeIndex + 1))
+    );
+
+    //End if there isn't a next in list
+    if ((widget.challengeIndex + 1) >= widget.challengeList.length) {
+      proceedRoute = MaterialPageRoute(
+        builder: (context) => new FinishedHuntScreen(config: widget.config)
+      );
+      proceedText = "Continue";
+    }
+
+    if (_challenge.betweenChallengeText == null || _challenge.betweenChallengeText.length == 0) {
+      Navigator.push(context, proceedRoute);
     } else {
-      throw 'Could not launch $url';
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => new AnimatedTextScreen(config: widget.config, animatedText: _challenge.betweenChallengeText,
+          proceedRoute: proceedRoute, proceedText: proceedText)));
     }
   }
 }

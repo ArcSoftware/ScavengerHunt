@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scavenger_hunt/MockApi/privateHunt.dart';
@@ -108,6 +109,7 @@ class _LSS extends State<LoginScreen> {
   }
 
   void login() async {
+    HapticFeedback.selectionClick();
     try {
       setState(() {
         _message = "Attempting to sign you in, please wait.";
@@ -164,7 +166,29 @@ class _LSS extends State<LoginScreen> {
         _message = "Hacking your mainframe...";
       });
 
-      await Future.delayed(const Duration(seconds: 1));
+      //Inside Joke with Heartbeat
+      HapticFeedback.heavyImpact();
+      await Future.delayed(const Duration(milliseconds: 200));
+      HapticFeedback.mediumImpact();
+      await Future.delayed(const Duration(milliseconds: 500));
+      HapticFeedback.mediumImpact();
+      await Future.delayed(const Duration(milliseconds: 200));
+      HapticFeedback.mediumImpact();
+      await Future.delayed(const Duration(milliseconds: 500));
+      HapticFeedback.heavyImpact();
+      await Future.delayed(const Duration(milliseconds: 200));
+      HapticFeedback.mediumImpact();
+      // await Future.delayed(const Duration(milliseconds: 500));
+      // HapticFeedback.mediumImpact();
+      // await Future.delayed(const Duration(milliseconds: 200));
+      // HapticFeedback.mediumImpact();
+
+      await Future.delayed(const Duration(milliseconds: 600));
+      setState(() {
+        _message = "Just kidding... ..maybe =P";
+      });
+
+      await Future.delayed(const Duration(milliseconds: 800));
       setState(() {
         _message = "Getting Hunt Info.";
       });

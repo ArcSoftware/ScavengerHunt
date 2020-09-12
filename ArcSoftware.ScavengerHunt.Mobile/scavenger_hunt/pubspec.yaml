@@ -37,10 +37,17 @@ dependencies:
   permission_handler: ^5.0.1+1
   font_awesome_flutter: any
   retry: ^3.0.1
+  carousel_slider: ^2.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.7.2"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -61,6 +68,65 @@ flutter:
     - images/introImg.png
 
     - privateImages/img1.png
+    - privateImages/iceCream.png
+    - privateImages/k556.png
+    - privateImages/v8.png
+    - privateImages/cooking.png
+    - privateImages/couchTogether.png
+    - privateImages/dogFamilyPhoto.png
+    - privateImages/drivingSleep.png
+    - privateImages/formalTogether.png
+    - privateImages/harborFamilyPhoto.png
+    - privateImages/outdoorTogether.png
+
+    - privateImages/fc1.png
+    - privateImages/fc2.png
+    - privateImages/fc3.png
+    - privateImages/fc4.png
+    - privateImages/fc5.png
+    - privateImages/fc6.png
+    - privateImages/fc7.png
+    - privateImages/fc8.png
+    - privateImages/fc9.png
+    - privateImages/fc10.png
+    - privateImages/fc10.1.png
+    - privateImages/fc10.2.png
+    - privateImages/fc10.3.png
+    - privateImages/fc11.png
+    - privateImages/fc12.png
+    - privateImages/fc13.png
+    - privateImages/fc13.1.png
+    - privateImages/fc13.2.png
+    - privateImages/fc13.3.png
+    - privateImages/fc14.png
+    - privateImages/fc14.1.png
+    - privateImages/fc15.png
+    - privateImages/fc16.png
+    - privateImages/fc16.1.png
+    - privateImages/fc17.png
+    - privateImages/fc18.png
+    - privateImages/fc19.png
+    - privateImages/fc20.png
+    - privateImages/fc21.png
+    - privateImages/fc22.png
+    - privateImages/fc23.png
+    - privateImages/fc24.png
+    - privateImages/fc24.1.png
+    - privateImages/fc24.2.png
+    - privateImages/fc24.3.png
+    - privateImages/fc25.png
+    - privateImages/fc26.png
+    - privateImages/fc26.1.png
+    - privateImages/fc26.2.png
+    - privateImages/fc27.png
+    - privateImages/fc28.png
+    - privateImages/fc28.1.png
+    - privateImages/fc29.png
+    - privateImages/fc29.1.png
+    - privateImages/fc30.png
+    - privateImages/fc30.1.png
+    - privateImages/fc31.png
+    - privateImages/fc32.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

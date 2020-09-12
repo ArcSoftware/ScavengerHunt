@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:scavenger_hunt/Models/animated_text_model.dart';
 import 'package:scavenger_hunt/app_config.dart';
 import '../main.dart';
@@ -72,7 +73,7 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
             ),
           ),
           Align(
-            alignment: Alignment(0.0, 1),
+            alignment: Alignment(0.0, 0.92),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -102,7 +103,6 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
   }
 
   Future _loadText() async {
-
     setState(() {
       _messageIndex = (_replayable) ? 0 : _messageIndex + 1;
       _actions = Container();
@@ -144,7 +144,10 @@ class _ATState extends State<AnimatedTextScreen> with TickerProviderStateMixin {
       } else {
         _actions = RaisedButton(
           elevation: 10.0,
-          onPressed: () { Navigator.push(context, widget.proceedRoute); },
+          onPressed: () {
+            HapticFeedback.selectionClick();
+            Navigator.push(context, widget.proceedRoute); 
+          },
           textColor: Colors.black,
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 100.0),
           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),

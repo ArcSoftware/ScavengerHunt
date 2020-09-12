@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:scavenger_hunt/Mock/mock_api.dart';
+import 'package:scavenger_hunt/MockApi/privateHunt.dart';
 import 'package:scavenger_hunt/Models/hunt_model.dart';
 import 'package:scavenger_hunt/Screens/challenge_screen.dart';
 import 'package:scavenger_hunt/app_config.dart';
@@ -52,37 +52,6 @@ class _HState extends State<HuntScreen> {
             height: MediaQuery.of(context).size.height,
             child: Image.asset('images/img1.png')
           ),
-          // Align(
-          //   alignment: Alignment(0.0, 1),
-          //   child: Container(
-          //     height: 120, 
-          //     width: MediaQuery.of(context).size.width,
-          //     decoration: new BoxDecoration(
-          //       color: Colors.red[900],
-          //       borderRadius: new BorderRadius.all(const Radius.circular(20.0),
-          //       )
-          //     ),
-          //     padding: EdgeInsets.only(top: 2, bottom: 2),
-          //       child: Column(
-          //         children: <Widget>[
-          //           Row(
-          //             mainAxisAlignment: MainAxisAlignment.center,
-          //             children: <Widget>[
-          //               Text("Kaitlyn", style: TextStyle(color: appGreenColor(), fontSize: 26))
-          //             ],
-          //           ),
-          //           Row(
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             children: <Widget>[
-          //               Flexible(
-          //                 child: Text("By: Jake", style: TextStyle(color: Colors.grey, fontSize: 14)),
-          //               )
-          //             ],
-          //           )
-          //         ]
-          //       )
-          //     )
-          // ),
           Container(
             height: MediaQuery.of(context).size.height * 0.90, 
             width: MediaQuery.of(context).size.width ,
@@ -166,7 +135,7 @@ class _HState extends State<HuntScreen> {
 
       setState(() {
         // _huntsList = huntFromJson(huntCall.body);
-        _huntsList = huntFromJson(mockApi.huntListRet);
+        // _huntsList = huntFromJson(mockApi.);
       });
 
     } catch (e) {
